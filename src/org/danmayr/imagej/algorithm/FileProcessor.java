@@ -42,6 +42,7 @@ public class FileProcessor extends Thread {
      */
     public void run() {
 
+        long analyseStartTime = System.currentTimeMillis();
         mStopping = false;
         // Close all open windows
         closeAllWindow();
@@ -104,7 +105,27 @@ public class FileProcessor extends Thread {
          * mAnalyseSettings.mOutputFolder + File.separator + "statistic_all_over_final";
          * String convertCsvToXls = CsvToExcel.convertCsvToXls(xlsxResult, input);
          */
+        long elapsedMillis = System.currentTimeMillis() - analyseStartTime;
+        mDialog.addLogEntry("Analysis finished in " + formatDuration(elapsedMillis) + ".");
+
         mDialog.finishedAnalyse(reportGenerator.getFileName());
+    }
+
+    ///
+    /// \brief Format a duration in milliseconds as "Hh Mm Ss"
+    ///
+    private static String formatDuration(long millis) {
+        long totalSeconds = millis / 1000;
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+        if (hours > 0) {
+            return hours + "h " + minutes + "m " + seconds + "s";
+        } else if (minutes > 0) {
+            return minutes + "m " + seconds + "s";
+        } else {
+            return seconds + "s";
+        }
     }
 
     ///

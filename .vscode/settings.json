@@ -14,10 +14,7 @@
         "fijii/plugins/bio-formats_plugins-6.6.0.jar",
         "libs/fijii/plugins/bio-formats_plugins-6.6.0.jar",
         "libs/fijii/jars/ij-1.53c.jar",
-        "libs/evanalyzer/poi-ooxml-4.1.2.jar",
-        "libs/evanalyzer/poi-4.1.2.jar",
-        "libs/evanalyzer/poi-ooxml-schemas-4.1.2.jar",
-        "libs/evanalyzer/xmlbeans-3.1.0.jar"
+        "libs/evanalyzer/*.jar"
     ],
     "java.dependency.packagePresentation": "flat",
     "java.project.sourcePaths": [

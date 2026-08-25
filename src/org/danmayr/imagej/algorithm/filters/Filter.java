@@ -47,6 +47,11 @@ import org.danmayr.imagej.algorithm.AnalyseSettings;
 import org.danmayr.imagej.algorithm.ChannelSettings;
 
 public class Filter {
+    // ij.plugin.filter.Analyzer keeps its measurement state (e.g. "umeans") in
+    // static fields, not instance fields, so concurrent calls into it from
+    // multiple threads race on that shared state. Serialize access to it here.
+    private static final Object ANALYZER_LOCK = new Object();
+
     static int RESULT_FILE_ROI_IDX = 0;
     static int RESULT_FILE_IDX_AREA_SIZE = 1;
     static int RESULT_FILE_IDX_MEAN_GRAYSCALE = 2;
@@ -523,7 +528,9 @@ public class Filter {
         } else {
             analyzer.setRoiManager(null);
         }
-        analyzer.analyze(image, image.getProcessor());
+        synchronized (ANALYZER_LOCK) {
+            analyzer.analyze(image, image.getProcessor());
+        }
         ImagePlus mask = analyzer.getOutputImage();
         Filter.InvertImage(mask);
         Filter.ApplyThershold(mask, AutoThresholder.Method.Default);
@@ -554,9 +561,11 @@ public class Filter {
                 | Measurements.SHAPE_DESCRIPTORS;
         Analyzer analyzer = new Analyzer(image, measurements, rt);
 
-        for (int n = 0; n < rm.getCount(); n++) {
-            SetRoiInImage(image, rm, n);
-            analyzer.measure();
+        synchronized (ANALYZER_LOCK) {
+            for (int n = 0; n < rm.getCount(); n++) {
+                SetRoiInImage(image, rm, n);
+                analyzer.measure();
+            }
         }
         return rt;
     }

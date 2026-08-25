@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.poi.sl.draw.binding.CTPath2D;
 import org.danmayr.imagej.algorithm.AnalyseSettings;
 import org.danmayr.imagej.algorithm.ChannelSettings;
 import org.danmayr.imagej.algorithm.filters.ChannelInfoOverlaySettings;
@@ -173,6 +172,21 @@ public class EVColoc extends Pipeline {
 
             int colocNr = 0;
 
+            // getContainedPoints() rescans the whole ROI bounding box on every call and
+            // isn't cached by ImageJ. Each particle's own point count doesn't depend on
+            // its pairing partner, so precompute it once per particle here instead of
+            // recomputing it for every (particle1, particle2) pair below - otherwise an
+            // image with many overlapping particles turns this into an O(N1*N2) rescan
+            // that can take a very long time.
+            Map<Integer, Integer> ch1SnapAreaPoints = new TreeMap<>();
+            for (Map.Entry<Integer, ParticleInfo> particle1 : roiPic1.entrySet()) {
+                ch1SnapAreaPoints.put(particle1.getKey(), particle1.getValue().getSnapArea().getContainedPoints().length);
+            }
+            Map<Integer, Integer> ch2SnapAreaPoints = new TreeMap<>();
+            for (Map.Entry<Integer, ParticleInfo> particle2 : roiPic2.entrySet()) {
+                ch2SnapAreaPoints.put(particle2.getKey(), particle2.getValue().getSnapArea().getContainedPoints().length);
+            }
+
             for (Map.Entry<Integer, ParticleInfo> particle1 : roiPic1.entrySet()) {
                 for (Map.Entry<Integer, ParticleInfo> particle2 : roiPic2.entrySet()) {
                     Roi result = particle1.getValue().isPartOf(particle2.getValue());
@@ -185,9 +199,9 @@ public class EVColoc extends Pipeline {
                             // Calculate coloc factor
                             //
                             double colocFactor = (double) size
-                                    / (double) particle1.getValue().getSnapArea().getContainedPoints().length;
+                                    / (double) ch1SnapAreaPoints.get(particle1.getKey());
                             double colocFactor2 = (double) size
-                                    / (double) particle2.getValue().getSnapArea().getContainedPoints().length;
+                                    / (double) ch2SnapAreaPoints.get(particle2.getKey());
                             if (colocFactor2 > colocFactor) {
                                 colocFactor = colocFactor2;
                             }

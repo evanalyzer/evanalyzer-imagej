@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.poi.sl.draw.binding.CTPath2D;
 import org.danmayr.imagej.algorithm.AnalyseSettings;
 import org.danmayr.imagej.algorithm.ChannelSettings;
 import org.danmayr.imagej.algorithm.filters.ChannelInfoOverlaySettings;

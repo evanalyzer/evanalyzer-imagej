@@ -75,7 +75,7 @@ public class DetailReportExcel {
 
         XSSFCellStyle cellStyle = (XSSFCellStyle) sheet.getWorkbook().createCellStyle();
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-        XSSFColor col = new XSSFColor(new java.awt.Color(224, 224, 224));
+        XSSFColor col = new XSSFColor(new java.awt.Color(224, 224, 224), null);
         cellStyle.setFillForegroundColor(col);
         cellStyle.setBorderBottom(BorderStyle.THIN);
         cellStyle.setBorderTop(BorderStyle.THIN);
