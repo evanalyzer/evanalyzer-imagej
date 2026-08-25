@@ -30,7 +30,7 @@ jobs:
     needs: build_release
     runs-on: ubuntu-latest
     env:
-      IJ_DOWNLOAD_URL: https://downloads.imagej.net/fiji/latest/fiji-latest-linux64-jre.zip
+      IJ_DOWNLOAD_URL: https://downloads.imagej.net/fiji/latest/fiji-latest-linux64-jdk.zip
       WIKI_USER: ${{ secrets.FIJI_SITES_USERNAME }}
       UPDATE_PASS: ${{ secrets.FIJI_SITES_PASSWORD }}
       UPDATE_SITE: evanalyzer
@@ -43,7 +43,7 @@ jobs:
         run: |
           ls -l
           wget --no-check-certificate ${IJ_DOWNLOAD_URL}
-          unzip fiji-latest-linux64-jre.zip
+          unzip fiji-latest-linux64-jdk.zip
       - name: Update ImageJ
         run: |
           ./Fiji/fiji-linux-x64 --headless --update edit-update-site ${UPDATE_SITE} https://sites.imagej.net/${UPDATE_SITE}/ "webdav:${WIKI_USER}:${UPDATE_PASS}" .
