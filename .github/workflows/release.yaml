@@ -50,6 +50,8 @@ jobs:
           ./Fiji/fiji-linux-x64 --headless --update update
       - name: Release to ImageJ update site
         run: |
+          # Remove the jars installed from the update site, otherwise old library versions survive next to the new ones
+          rm -rf ./Fiji/jars/evanalyzer
           cp ./bin/EVAnalyzer.jar ./Fiji/plugins/EVAnalyzer.jar
           mkdir -p ./Fiji/jars/evanalyzer
           cp -r ./libs/evanalyzer/* ./Fiji/jars/evanalyzer
